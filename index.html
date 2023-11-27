@@ -14,7 +14,7 @@
       rel="stylesheet"
     />
     <!-- css -->
-    <link rel="stylesheet" href="./main.css" />
+    <link rel="stylesheet" href="./styles/css/main.css" />
     <title>YAP</title>
   </head>
   <body>
@@ -50,13 +50,19 @@
             <span class="material-icons-outlined">dashboard</span>Dashboard
           </li>
           <li class="sidebar-list-item">
-            <span class="material-icons-outlined">inventory_2</span>Products
+            <a href="/pages/products.html">
+              <span class="material-icons-outlined">inventory_2</span>Products
+            </a>
           </li>
           <li class="sidebar-list-item">
-            <span class="material-icons-outlined">groups</span>Users
+            <a href="/pages/users.html">
+              <span class="material-icons-outlined">groups</span>Users
+            </a>
           </li>
           <li class="sidebar-list-item">
-            <span class="material-icons-outlined">dvr</span>Orders
+            <a href="/pages/orders.html">
+              <span class="material-icons-outlined">dvr</span>Orders
+            </a>
           </li>
         </ul>
       </aside>
@@ -68,29 +74,35 @@
         </div>
 
         <div class="main-cards">
-          <div class="card">
-            <div class="card-inner">
-              <h3>USERS</h3>
-              <span class="material-icons-outlined">groups</span>
+          <a href="/pages/users.html">
+            <div class="card">
+              <div class="card-inner">
+                <h3>USERS</h3>
+                <span class="material-icons-outlined">groups</span>
+              </div>
+              <h1 id="users-count">0</h1>
             </div>
-            <h1>20</h1>
-          </div>
+          </a>
 
-          <div class="card">
-            <div class="card-inner">
-              <h3>PRODUCTS</h3>
-              <span class="material-icons-outlined">inventory_2</span>
+          <a href="/pages/products.html">
+            <div class="card">
+              <div class="card-inner">
+                <h3>PRODUCTS</h3>
+                <span class="material-icons-outlined">inventory_2</span>
+              </div>
+              <h1 id="products-count">20</h1>
             </div>
-            <h1>20</h1>
-          </div>
+          </a>
 
-          <div class="card">
-            <div class="card-inner">
-              <h3>ORDERS</h3>
-              <span class="material-icons-outlined">dvr</span>
+          <a href="/pages/orders.html">
+            <div class="card">
+              <div class="card-inner">
+                <h3>ORDERS</h3>
+                <span class="material-icons-outlined">dvr</span>
+              </div>
+              <h1 id="orders-count">20</h1>
             </div>
-            <h1>20</h1>
-          </div>
+          </a>
         </div>
 
         <div class="charts">
@@ -112,6 +124,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
-    <script src="./app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./js/app.js"></script>
   </body>
 </html>

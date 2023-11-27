@@ -20,7 +20,7 @@ function closeSidebar() {
 // ======================== CHARTS ========================
 // BAR CHARTS
 
-var options = {
+let options1 = {
   series: [
     {
       data: [12, 19, 3, 5, 2],
@@ -44,11 +44,11 @@ var options = {
   },
 };
 
-var chart = new ApexCharts(document.querySelector("#bar-chart"), options);
-chart.render();
+let chart1 = new ApexCharts(document.querySelector("#bar-chart"), options1);
+chart1.render();
 
 // AREA
-var options = {
+let options2 = {
   series: [
     {
       name: "series1",
@@ -88,8 +88,35 @@ var options = {
   },
 };
 
-var chart = new ApexCharts(document.querySelector("#area-chart"), options);
-chart.render();
+let chart2 = new ApexCharts(document.querySelector("#area-chart"), options2);
+chart2.render();
 
 // ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
+// Main
+
+let usersCount = document.querySelector("#users-count");
+let ordersCount = document.querySelector("#orders-count");
+let productsCount = document.querySelector("#products-count");
+
+axios.defaults.baseURL = "http://localhost:3000";
+
+const wait = (delay) => new Promise((res) => setTimeout(res, delay));
+const displayStat = async function (data, element) {
+  let random = Math.floor(Math.random() * (100 - 70 + 1) + 70);
+  for (let i = 1; i <= data.length; i++) {
+    await wait(random);
+    element.innerHTML = i;
+  }
+};
+
+(async function () {
+  let users = await axios.get("/users");
+  let orders = await axios.get("/orders");
+  let products = await axios.get("/products");
+  displayStat(users.data, usersCount);
+  displayStat(orders.data, ordersCount);
+  displayStat(products.data, productsCount);
+})();
+
+// Main end
