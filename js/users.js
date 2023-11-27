@@ -3,14 +3,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let tbody = document.querySelector("tbody");
   let createUserModal = document.querySelector("#create-user-modal");
+  let editUserModal = document.querySelector("#edit-user-modal");
 
   let createUserModalInstance = null;
   createUserModal.addEventListener("shown.bs.modal", function () {
     createUserModalInstance = bootstrap.Modal.getInstance(createUserModal);
   });
 
+  let editUserModalInstance = null;
+  editUserModal.addEventListener("shown.bs.modal", function () {
+    editUserModalInstance = bootstrap.Modal.getInstance(editUserModal);
+  });
+
+  const updateUser = (user) => {
+    let tr = document.querySelector(`#user-${user.id}`);
+
+    let tds = [
+      user.id,
+      `<img
+          src="${user.image}"
+          alt=""
+          class="rounded-circle object-fit-cover"
+          width="50"
+          height="50"
+        />`,
+      `${user.first_name} ${user.last_name}`,
+      user.age,
+      user.email,
+    ];
+
+    tds.forEach((td, index) => {
+      tr.children[index].innerHTML = td;
+    });
+  };
+
   const appendUser = (user) => {
     let tr = document.createElement("tr");
+    tr.id = `user-${user.id}`;
 
     let tds = [
       user.id,
@@ -59,6 +88,42 @@ document.addEventListener("DOMContentLoaded", async () => {
       tr.remove();
 
       await axios.delete(`/users/${user.id}`);
+    });
+
+    editBtn.addEventListener("click", () => {
+      let form = document.querySelector("#edit-user-form");
+      new bootstrap.Modal("#edit-user-modal").show();
+
+      form.querySelector("#edit-first-name").value = user.first_name;
+      form.querySelector("#edit-last-name").value = user.last_name;
+      form.querySelector("#edit-age").value = user.age;
+      form.querySelector("#edit-email").value = user.email;
+      form.querySelector("#edit-image").value = user.image;
+
+      document
+        .querySelector("#edit-user-btn")
+        .addEventListener("click", async () => {
+          let first_name = form[0].value;
+          let last_name = form[1].value;
+          let age = +form[2].value;
+          let email = form[3].value;
+          let image = form[4].value;
+
+          let newUserInfo = {
+            first_name,
+            last_name,
+            age,
+            email,
+            password: user.password,
+            image,
+          };
+
+          let { data } = await axios.put(`/users/${user.id}`, newUserInfo);
+
+          updateUser(data);
+
+          editUserModalInstance.hide();
+        });
     });
   };
 
