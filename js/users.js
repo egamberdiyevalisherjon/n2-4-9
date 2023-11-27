@@ -1,14 +1,19 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  let tbody = document.querySelector("tbody");
-
   axios.defaults.baseURL = "http://localhost:3000";
 
-  let users = await axios.get("/users");
-  users.data.forEach((user, index) => {
+  let tbody = document.querySelector("tbody");
+  let createUserModal = document.querySelector("#create-user-modal");
+
+  let createUserModalInstance = null;
+  createUserModal.addEventListener("shown.bs.modal", function () {
+    createUserModalInstance = bootstrap.Modal.getInstance(createUserModal);
+  });
+
+  const appendUser = (user) => {
     let tr = document.createElement("tr");
 
     let tds = [
-      `${index + 1}.`,
+      user.id,
       `<img
           src="${user.image}"
           alt=""
@@ -49,5 +54,55 @@ document.addEventListener("DOMContentLoaded", async () => {
     tr.append(actionsTd);
 
     tbody.append(tr);
-  });
+
+    deleteBtn.addEventListener("click", async () => {
+      tr.remove();
+
+      await axios.delete(`/users/${user.id}`);
+    });
+  };
+
+  let users = await axios.get("/users");
+
+  users.data.forEach(appendUser);
+
+  let createUserBtn = document.querySelector("#create-user-btn");
+
+  async function createUser() {
+    let form = document.querySelector("#create-user-form");
+
+    let first_name = form[0].value;
+    let last_name = form[1].value;
+    let age = +form[2].value;
+    let email = form[3].value;
+    let password = form[4].value;
+    let image = form[5].value;
+
+    let newUser = {
+      first_name,
+      last_name,
+      age,
+      email,
+      password,
+      image,
+    };
+
+    // await fetch("http://localhost:3000/users", {
+    //   method: "POST",
+    //   body: JSON.stringify(newUser),
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // }).then((res) => res.json());
+
+    let res = await axios.post("/users", newUser);
+
+    form.reset();
+
+    createUserModalInstance.hide();
+
+    appendUser(res.data);
+  }
+
+  createUserBtn.addEventListener("click", createUser);
 });
