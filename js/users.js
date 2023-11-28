@@ -4,6 +4,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   let tbody = document.querySelector("tbody");
   let createUserModal = document.querySelector("#create-user-modal");
   let editUserModal = document.querySelector("#edit-user-modal");
+  let updatePasswordModal = document.querySelector("#update-password-modal");
+  let alertsWrapper = document.querySelector(".alerts-wrapper");
+  let eyes = document.querySelectorAll(".show-password");
+
+  eyes.forEach((eye) => {
+    eye.addEventListener("click", () => {
+      eye.querySelector("span").innerHTML =
+        eye.querySelector("span").innerHTML === "visibility"
+          ? "visibility_off"
+          : "visibility";
+
+      eye.previousElementSibling.setAttribute(
+        "type",
+        eye.previousElementSibling.getAttribute("type") === "text"
+          ? "password"
+          : "text"
+      );
+    });
+  });
 
   let createUserModalInstance = null;
   createUserModal.addEventListener("shown.bs.modal", function () {
@@ -14,6 +33,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   editUserModal.addEventListener("shown.bs.modal", function () {
     editUserModalInstance = bootstrap.Modal.getInstance(editUserModal);
   });
+
+  let updatePasswordModalInstance = null;
+  updatePasswordModal.addEventListener("shown.bs.modal", function () {
+    updatePasswordModalInstance =
+      bootstrap.Modal.getInstance(updatePasswordModal);
+  });
+
+  const showAlert = (msg) => {
+    let alert = `
+            <div class="alert alert-danger alert-dismissible">
+              ${msg}
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+              ></button>
+            </div>
+            `;
+
+    alertsWrapper.innerHTML += alert;
+  };
 
   const updateUser = (user) => {
     let tr = document.querySelector(`#user-${user.id}`);
@@ -30,6 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       `${user.first_name} ${user.last_name}`,
       user.age,
       user.email,
+      user.password,
     ];
 
     tds.forEach((td, index) => {
@@ -122,9 +163,57 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           updateUser(data);
 
-          user = data
+          user = data;
 
           editUserModalInstance.hide();
+        });
+    });
+
+    changePasswordBtn.addEventListener("click", () => {
+      let form = document.querySelector("#update-password-form");
+      new bootstrap.Modal("#update-password-modal").show();
+
+      document
+        .querySelector("#update-password-btn")
+        .addEventListener("click", async () => {
+          let currentPassword = form[0].value;
+          let newPassword = form[1].value;
+          let confirmPassword = form[2].value;
+
+          if (!currentPassword || !newPassword || !confirmPassword) {
+            showAlert("All Fields Are Required!s");
+            return;
+          }
+
+          if (currentPassword !== user.password) {
+            showAlert("Wrong password");
+            return;
+          }
+
+          if (newPassword !== confirmPassword) {
+            showAlert("New passwords do not match");
+            return;
+          }
+
+          if (newPassword === user.password) {
+            showAlert("New password must be different from current password");
+            return;
+          }
+
+          let newUserInfo = {
+            ...user,
+            password: newPassword,
+          };
+
+          let { data } = await axios.put(`/users/${user.id}`, newUserInfo);
+
+          updateUser(data);
+
+          user = data;
+
+          updatePasswordModalInstance.hide();
+
+          form.reset();
         });
     });
   };

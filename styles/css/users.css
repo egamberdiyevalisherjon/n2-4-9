@@ -175,6 +175,18 @@ main {
   justify-content: center;
 }
 
+div:has(.show-password) {
+  position: relative;
+}
+
+.show-password {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
 /* ======================= MEDIA QUERY ======================= */
 /* :::::::::::::::::::::::::::::::::::::: 992px */
 @media screen and (max-width: 992px) {
