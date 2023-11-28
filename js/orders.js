@@ -88,8 +88,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     createOrderModalInstance = bootstrap.Modal.getInstance(createOrderModal);
   });
 
-  let { data: orders } = await axios.get("/orders");
-  let { data: clients } = await axios.get("/users");
+  let [{ data: orders }, { data: clients }] = await Promise.all([
+    axios.get("/orders"),
+    axios.get("/users"),
+  ]);
 
   function appendOrder(order) {
     let tr = document.createElement("tr");

@@ -102,23 +102,34 @@ let productsCount = document.querySelector("#products-count");
 axios.defaults.baseURL = "http://localhost:3000";
 
 const wait = (delay) => new Promise((res) => setTimeout(res, delay));
-const displayStat = async function (data, element) {
+const displayStat = async function (data, cb) {
   let random = Math.floor(Math.random() * (100 - 70 + 1) + 70);
   for (let i = 1; i <= data.length; i++) {
     await wait(random);
-    element.innerHTML = i;
+    cb(i);
   }
 };
 
 (async function () {
-  let users = await axios.get("/users");
-  let orders = await axios.get("/orders");
-  let products = await axios.get("/products");
-  displayStat(users.data, usersCount);
-  ordersCount.innerText = `${orders.data.length} ($${orders.data
-    .reduce((prev, curr) => prev + curr.totalPrice, 0)
-    .toFixed(2)})`;
-  displayStat(products.data, productsCount);
+  let [{ data: users }, { data: orders }, { data: products }] =
+    await Promise.all([
+      axios.get("/users"),
+      axios.get("/orders"),
+      axios.get("/products"),
+    ]);
+  displayStat(users, (i) => {
+    usersCount.innerHTML = i;
+  });
+  displayStat(products, (i) => {
+    productsCount.innerHTML = i;
+  });
+  displayStat(orders, (i) => {
+    ordersCount.innerText = `${i} ($${(
+      (orders.reduce((prev, curr) => prev + curr.totalPrice, 0) /
+        orders.length) *
+      i
+    ).toFixed(2)})`;
+  });
 })();
 
 // Main end
