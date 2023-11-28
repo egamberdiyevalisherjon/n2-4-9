@@ -122,6 +122,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           updateUser(data);
 
+          user = data
+
           editUserModalInstance.hide();
         });
     });
