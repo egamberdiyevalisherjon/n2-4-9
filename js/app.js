@@ -115,7 +115,9 @@ const displayStat = async function (data, element) {
   let orders = await axios.get("/orders");
   let products = await axios.get("/products");
   displayStat(users.data, usersCount);
-  displayStat(orders.data, ordersCount);
+  ordersCount.innerText = `${orders.data.length} ($${orders.data
+    .reduce((prev, curr) => prev + curr.totalPrice, 0)
+    .toFixed(2)})`;
   displayStat(products.data, productsCount);
 })();
 
